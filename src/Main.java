@@ -8,19 +8,19 @@ public final class Main {
 }
 
 final class ConsoleCalculator {
-    private enum OperationType {FIST_OPERAND_INPUT, OPERATION_INPUT, SECOND_OPERAND_INPUT, COMMAND_EXECUTION}
+    private enum OperationType {FIRST_OPERAND_INPUT, OPERATION_INPUT, SECOND_OPERAND_INPUT, COMMAND_EXECUTION}
 
     private enum CommandType {NONE, RESET, EXIT}
 
     private final Calculator calculator = new Calculator();
     private final Scanner scanner = new Scanner(System.in);
-    private OperationType currentOperation = OperationType.FIST_OPERAND_INPUT;
+    private OperationType currentOperation = OperationType.FIRST_OPERAND_INPUT;
     private CommandType currentCommand = CommandType.NONE;
 
     public void run() {
         while (true) {
             switch (currentOperation) {
-                case FIST_OPERAND_INPUT: {
+                case FIRST_OPERAND_INPUT: {
                     System.out.println("Значение: " + calculator.getValue());
                     readUntilSuccess("Введите число или команду (C — сброс, S — выход): ",
                             (line) -> {
@@ -71,9 +71,9 @@ final class ConsoleCalculator {
                 case COMMAND_EXECUTION: {
                     switch (currentCommand) {
                         case RESET: {
-                            calculator.resetValue();
+                            calculator.reset();
                             currentCommand = CommandType.NONE;
-                            currentOperation = OperationType.FIST_OPERAND_INPUT;
+                            currentOperation = OperationType.FIRST_OPERAND_INPUT;
                             break;
                         }
                         case EXIT: {
@@ -91,8 +91,8 @@ final class ConsoleCalculator {
     private void readUntilSuccess(String title, Consumer<String> func) {
         while (true) {
             System.out.println(title);
-            String line = scanner.next();
             try {
+                String line = scanner.nextLine().trim();
                 func.accept(line);
                 return;
             } catch (RuntimeException exception) {
@@ -130,8 +130,9 @@ final class Calculator {
         return value;
     }
 
-    public void resetValue() {
+    public void reset() {
         value = null;
+        operation = null;
     }
 
     public void setValue(double value) {
